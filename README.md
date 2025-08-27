@@ -29,6 +29,7 @@ Please download the dataset and put them in the data folder.
 mkdir data 
 cd data 
 wget https://drive.google.com/file/d/1DmvVKvZIVxT4-bxIIZ4bRQtIrQJ2QwJN/view?usp=drive_link
+wget https://drive.google.com/file/d/1LVP7j1KhmgnotB_N7WyrKY8eBU61d_Ht/view?usp=sharing
 ```
 
 <h2>Download Model</h2>

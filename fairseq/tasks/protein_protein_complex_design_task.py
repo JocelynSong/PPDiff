@@ -128,7 +128,7 @@ class ProteinProteinComplexDesignTask(FairseqTask):
         return cls(cfg, alphabet)
     
     def get_secondary_candidates(self, ):
-        lines = open("/mnt/taurus/data1/zhenqiaosong/protein/protein_protein_complex_design/secondary_structure.txt").readlines()
+        lines = open("data/secondary_structure.txt").readlines()
         cands = [torch.tensor([self.dictionary.tok_to_idx[char] for char in line.strip()]).to("cuda") for line in lines]
         return cands
 
