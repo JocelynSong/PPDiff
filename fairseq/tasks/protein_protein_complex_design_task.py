@@ -160,8 +160,6 @@ class ProteinProteinComplexDesignTask(FairseqTask):
         return model
 
     def valid_step(self, sample, model, criterion):
-        # interleaving model
-        # loss, sample_size, logging_output = super().valid_step(sample, model, criterion)
 
         # diffusion model
         sum_loss, sum_loss_pos, sum_loss_res, sum_n = 0, 0, 0, 0
@@ -198,36 +196,6 @@ class ProteinProteinComplexDesignTask(FairseqTask):
 
         if self.cfg.eval_aa_recovery:
             with torch.no_grad():
-                # interleaving network
-                # seqs = sample["seqs"]
-                # seq_lengths = sample["seq_lengths"]
-                # coors = sample["coors"]    # [B, L, 3]
-                # target = sample["target"]  # [B, L]
-                # sample_size = sample["ntokens"]
-                # seq_probs, coords = model(seqs, seq_lengths, coors, target)
-                
-                # # greedy
-                # # seq_probs[:, 1: -1, : 4] = -math.inf
-                # # seq_probs[:, :, 24:] = -math.inf
-                # # indexes = torch.argmax(seq_probs, dim=-1)   # [batch, length]
-
-                # # sampling
-                # seq_probs[:, 1: -1, : 4] = 0
-                # seq_probs[:, :, 24:] = 0
-                # batch_size = seq_probs.size(0)
-                # sorted_logits, sorted_indices = torch.sort(seq_probs, descending=True)
-                # cumulative_probs = torch.cumsum(sorted_logits, dim=-1)  # [B,L, vocab]
-                # sorted_indices_to_remove = cumulative_probs > 0.4
-                # sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
-                # sorted_indices_to_remove[..., 0] = 0
-                # indices_to_remove = sorted_indices_to_remove.scatter(-1, sorted_indices, sorted_indices_to_remove)
-                # seq_probs[indices_to_remove] = 0
-                # indexes = torch.multinomial(seq_probs.view(-1, seq_probs.size(-1)), 1).reshape(batch_size, -1)
-
-                # indexes = target * seqs + (target == 0).int() * indexes
-                # srcs = [model.encoder.alphabet.string(seqs[i]) for i in range(seqs.size(0))]
-                # strings = [model.encoder.alphabet.string(indexes[i]) for i in range(len(indexes))]
-                # return loss, sample_size, logging_output, strings, srcs, coords, target
 
                 # diffusion model
                 seqs = sample["seqs"]
