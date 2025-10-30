@@ -6,9 +6,10 @@
 
 from .fairseq_dataset import FairseqDataset, FairseqIterableDataset
 
-from .geometric_protein_dataset import ProteinDataset
 from .fasta_dataset import FastaDataset, EncodedFastaDataset
 from .protein_protein_complex_dataset import ProteinComplexDataset
+from .antigen_antibody_complex_dataset import AntigenAntibodyComplexDataset
+
 
 from .iterators import (
     EpochBatchIterator,
@@ -18,6 +19,6 @@ __all__ = [
     "EpochBatchIterator",
     "FairseqDataset",
     "FairseqIterableDataset",
-    "ProteinDataset",
-    "ProteinComplexDataset"
+    "ProteinComplexDataset",
+    "AntigenAntibodyComplexDataset"
 ]

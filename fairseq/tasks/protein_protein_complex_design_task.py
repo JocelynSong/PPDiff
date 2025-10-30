@@ -22,6 +22,7 @@ from fairseq import utils
 from fairseq.data import (
     ProteinComplexDataset,
     data_utils,
+    AntigenAntibodyComplexDataset
 )
 from fairseq.dataclass import FairseqDataclass
 from fairseq.tasks import FairseqTask, register_task
@@ -51,21 +52,30 @@ def load_protein_dataset(
         data_path, dictionary, dataset_impl, split=split, protein=protein
     )
 
-    
-    
     logger.info( "Loading {} {} {} examples".format(
                 data_path, split, len(protein_complex_dataset)))
-
-    return ProteinComplexDataset(
-            protein_complex_dataset,
-            protein_complex_dataset.sizes,
-            dictionary,
-            left_pad=left_pad,
-            eos=dictionary.eos(),
-            num_buckets=num_buckets,
-            shuffle=shuffle,
-            pad_to_multiple=pad_to_multiple,
-        )
+    if dataset_impl in ["protein_complex", "binder_design"]:
+        return ProteinComplexDataset(
+                protein_complex_dataset,
+                protein_complex_dataset.sizes,
+                dictionary,
+                left_pad=left_pad,
+                eos=dictionary.eos(),
+                num_buckets=num_buckets,
+                shuffle=shuffle,
+                pad_to_multiple=pad_to_multiple,
+            )
+    else:
+        return AntigenAntibodyComplexDataset(
+                protein_complex_dataset,
+                protein_complex_dataset.sizes,
+                dictionary,
+                left_pad=left_pad,
+                eos=dictionary.eos(),
+                num_buckets=num_buckets,
+                shuffle=shuffle,
+                pad_to_multiple=pad_to_multiple,
+            )
 
 
 @dataclass
@@ -205,6 +215,9 @@ class ProteinProteinComplexDesignTask(FairseqTask):
                 sample_size = sample["ntokens"]
                 n_sentence = sample["nsentences"]
                 batch_size, n_nodes = seqs.size()[0], seqs.size()[1]
+                if self.cfg.dataset_impl == "antibody_design":
+                    antigen_len = sample["antigen_len"]
+                    heavy_chain_len = sample["heavy_chain_len"]
 
                 outputs = model.sample_diffusion(seqs, coors, target_mask, ss_initial=self.ss_cands)
                 indexes = outputs["residue"]
@@ -214,7 +227,11 @@ class ProteinProteinComplexDesignTask(FairseqTask):
                 strings = [model.encoder.alphabet.string(indexes[i]) for i in range(len(indexes))]
                 print(srcs[0])
                 print(strings[0])
-                return loss, sample_size, logging_output, strings, srcs, outputs["pos"], target_mask
+                if self.cfg.dataset_impl == "antibody_design":
+                    return loss, sample_size, logging_output, strings, srcs, outputs["pos"], target_mask, antigen_len, heavy_chain_len
+                else:
+                    return loss, sample_size, logging_output, strings, srcs, outputs["pos"], target_mask
+            
         return loss, sample_size, logging_output
 
     def reduce_metrics(self, logging_outputs, criterion):
